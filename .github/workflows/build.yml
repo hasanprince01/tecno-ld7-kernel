@@ -1,0 +1,28 @@
+name: Build Kernel Module (.ko)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Toolchain & Kernel 4.14 Headers
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential gcc-aarch64-linux-gnu git
+        git clone https://github.com/android-linux-stable/mt6768.git --depth=1 -b android-4.14 kernel_src
+
+    - name: Compile Driver Module
+      run: |
+        make -C kernel_src M=$PWD ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- modules
+
+    - name: Upload .ko Driver File
+      uses: actions/upload-artifact@v3
+      with:
+        name: Tecno-LD7-Driver-4.14.141
+        path: "*.ko"
