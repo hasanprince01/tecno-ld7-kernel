@@ -1,0 +1,1 @@
+# tecno-ld7-kernel
